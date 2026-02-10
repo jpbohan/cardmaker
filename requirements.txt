@@ -1,0 +1,5 @@
+Flask
+reportlab
+Pillow
+gunicorn
+pillow-heif

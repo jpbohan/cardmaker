@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Birthday Card Maker</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 14px; }
+    label { font-weight: 600; display: block; margin-bottom: 8px; }
+    input[type=file] { width: 100%; }
+    button { margin-top: 18px; padding: 12px 16px; border: 0; border-radius: 12px; font-weight: 700; cursor: pointer; }
+    .note { color: #555; margin-top: 10px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Birthday Card Maker</h1>
+  <p>Upload 4 photos and download a print-ready PDF.</p>
+
+  <form action="/generate" method="post" enctype="multipart/form-data">
+    <div class="grid">
+      <div class="card">
+        <label>Front (outside)</label>
+        <input name="front" type="file" accept="image/*" required>
+      </div>
+      <div class="card">
+        <label>Back (outside)</label>
+        <input name="back" type="file" accept="image/*" required>
+      </div>
+      <div class="card">
+        <label>Inner Left</label>
+        <input name="inner_left" type="file" accept="image/*" required>
+      </div>
+      <div class="card">
+        <label>Inner Right</label>
+        <input name="inner_right" type="file" accept="image/*" required>
+      </div>
+    </div>
+
+    <button type="submit">Generate PDF</button>
+    <div class="note">
+      Prints on Letter paper (11x8.5 landscape) with fold guides.
+    </div>
+  </form>
+</body>
+</html>
