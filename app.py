@@ -17,7 +17,7 @@ except Exception:
 app = Flask(__name__)
 
 # Limit total upload size (all 4 images combined)
-app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024  # 15MB
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 15MB
 
 ALLOWED_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".heic", ".heif"}
 
@@ -32,14 +32,16 @@ def _check_file(file_storage) -> bool:
 
 
 def _open_image(file_storage) -> Image.Image:
-    """
-    Safely open and normalize an uploaded image to RGB.
-    """
     file_storage.stream.seek(0)
     img = Image.open(file_storage.stream)
-    img.verify()  # quick sanity check
+
+    img.verify()  # quick validation
+
     file_storage.stream.seek(0)
     img = Image.open(file_storage.stream).convert("RGB")
+
+    img.load()  # <-- ADD IT HERE (forces image into memory immediately)
+
     return img
 
 
@@ -87,8 +89,9 @@ def _draw_pil_cover(
 
 # ---- Helpers: downscale to avoid OOM on Render Free ----
 
-MAX_PIXELS = 12_000_000  # 12MP safety cap (keeps memory low)
-TARGET_DPI = 250         # good print quality without huge RAM
+MAX_PIXELS = 8_000_000    # 8MP
+TARGET_DPI = 200          # still good print quality for a card
+
 
 def _downscale_for_print(img: Image.Image, box_w_points: float, box_h_points: float) -> Image.Image:
     """
