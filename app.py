@@ -66,6 +66,29 @@ def _cover_crop_to_box(pil_img: Image.Image, box_w: float, box_h: float) -> Imag
         top = (img_h - new_h) // 2
         return pil_img.crop((0, top, img_w, top + new_h))
 
+def _draw_pil_contain(
+    c,
+    pil_img,
+    box_x,
+    box_y,
+    box_w,
+    box_h,
+    rotate_180=False
+):
+    img = pil_img
+    if rotate_180:
+        img = img.rotate(180, expand=True)
+
+    img_w, img_h = img.size
+    scale = min(box_w / img_w, box_h / img_h)
+
+    draw_w = img_w * scale
+    draw_h = img_h * scale
+
+    x = box_x + (box_w - draw_w) / 2
+    y = box_y + (box_h - draw_h) / 2
+
+    c.drawImage(ImageReader(img), x, y, width=draw_w, height=draw_h, mask="auto")
 
 def _draw_pil_cover(
     c: canvas.Canvas,
@@ -121,7 +144,7 @@ def _downscale_for_print(img: Image.Image, box_w_points: float, box_h_points: fl
 
 # ---- PDF builder ----
 
-def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img) -> bytes:
+def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img, fit_mode=None):
     """
     Creates a 1-page PDF (Letter landscape) split into 4 panels:
       Top-left:  FRONT (outside) rotated 180
@@ -153,13 +176,16 @@ def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img) -> byte
     left_x = margin
     right_x = margin + quad_w + gutter
 
-    # Outside (top row): FRONT (top-left, upside down) | BACK (top-right, upside down)
-    _draw_pil_cover(c, front_img, left_x, top_y, quad_w, quad_h, rotate_180=True)
-    _draw_pil_cover(c, back_img, right_x, top_y, quad_w, quad_h, rotate_180=True)
+    # Choose drawing function based on checkbox
+    draw_fn = _draw_pil_contain if fit_mode == "contain" else _draw_pil_cover
 
-    # Inside (bottom row): INNER LEFT | INNER RIGHT
-    _draw_pil_cover(c, inner_left_img, left_x, bot_y, quad_w, quad_h, rotate_180=False)
-    _draw_pil_cover(c, inner_right_img, right_x, bot_y, quad_w, quad_h, rotate_180=False)
+    # Outside (top row): FRONT | BACK (rotated)
+    draw_fn(c, front_img, left_x, top_y, quad_w, quad_h, rotate_180=True)
+    draw_fn(c, back_img, right_x, top_y, quad_w, quad_h, rotate_180=True)
+
+    # Inside (bottom row)
+    draw_fn(c, inner_left_img, left_x, bot_y, quad_w, quad_h, rotate_180=False)
+    draw_fn(c, inner_right_img, right_x, bot_y, quad_w, quad_h, rotate_180=False)
 
     # Light fold guides (optional)
     c.saveState()
@@ -190,6 +216,8 @@ def generate():
     back = request.files.get("back")
     inner_left = request.files.get("inner_left")
     inner_right = request.files.get("inner_right")
+    fit_mode = request.form.get("fit_mode")  # None or "contain"
+
 
     # Validate presence + extensions
     if not all(_check_file(f) for f in [front, back, inner_left, inner_right]):
@@ -201,7 +229,14 @@ def generate():
         inner_left_img = _open_image(inner_left)
         inner_right_img = _open_image(inner_right)
 
-        pdf_bytes = build_card_pdf(front_img, back_img, inner_left_img, inner_right_img)
+        pdf_bytes = build_card_pdf(
+          front_img,
+          back_img,
+          inner_left_img,
+          inner_right_img,
+          fit_mode=fit_mode
+        )
+
 
     except Exception as e:
         # Helpful log for Render
