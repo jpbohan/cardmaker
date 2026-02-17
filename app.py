@@ -17,7 +17,7 @@ except Exception:
 app = Flask(__name__)
 
 # Limit total upload size (all 4 images combined)
-app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 15MB
+app.config["MAX_CONTENT_LENGTH"] = 40 * 1024 * 1024  # 40MB
 
 ALLOWED_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".heic", ".heif"}
 
