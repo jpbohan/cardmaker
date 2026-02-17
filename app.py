@@ -159,12 +159,14 @@ def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img, fit_mod
 
     margin = 0.35 * inch
 #    gutter = 0.10 * inch
-    gutter = 0
+    gutter_x = 0
+    gutter_y = 0.10 * inch
+
     usable_w = page_w - 2 * margin
     usable_h = page_h - 2 * margin
 
-    quad_w = (usable_w - gutter) / 2
-    quad_h = (usable_h - gutter) / 2
+    quad_w = (usable_w - gutter_x) / 2
+    quad_h = (usable_h - gutter_y) / 2
 
     # Downscale once to avoid memory spikes
     front_img = _downscale_for_print(front_img, quad_w, quad_h)
@@ -172,10 +174,10 @@ def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img, fit_mod
     inner_left_img = _downscale_for_print(inner_left_img, quad_w, quad_h)
     inner_right_img = _downscale_for_print(inner_right_img, quad_w, quad_h)
 
-    top_y = margin + quad_h + gutter
+    top_y = margin + quad_h + gutter_y
     bot_y = margin
     left_x = margin
-    right_x = margin + quad_w + gutter
+    right_x = margin + quad_w + gutter_x
 
     # Choose drawing function based on checkbox
     draw_fn = _draw_pil_contain if fit_mode == "contain" else _draw_pil_cover
@@ -194,7 +196,7 @@ def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img, fit_mod
     c.setDash(2, 3)
     c.setStrokeGray(0.65)
 #    c.line(page_w / 2, 0, page_w / 2, page_h)  # vertical fold guide
-    c.line(0, page_h / 2, page_w, page_h / 2)  # horizontal guide
+#    c.line(0, page_h / 2, page_w, page_h / 2)  # horizontal guide
     c.restoreState()
 
     c.showPage()
