@@ -160,7 +160,7 @@ def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img, fit_mod
     margin = 0.35 * inch
 #    gutter = 0.10 * inch
     gutter_x = 0
-    gutter_y = 0.10 * inch
+    gutter_y = 0.06 * inch
 
     usable_w = page_w - 2 * margin
     usable_h = page_h - 2 * margin
