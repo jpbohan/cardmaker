@@ -158,7 +158,8 @@ def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img, fit_mod
     c = canvas.Canvas(buf, pagesize=(page_w, page_h))
 
     margin = 0.35 * inch
-    gutter = 0.10 * inch
+#    gutter = 0.10 * inch
+    gutter = 0
     usable_w = page_w - 2 * margin
     usable_h = page_h - 2 * margin
 
@@ -192,7 +193,7 @@ def build_card_pdf(front_img, back_img, inner_left_img, inner_right_img, fit_mod
     c.setLineWidth(0.5)
     c.setDash(2, 3)
     c.setStrokeGray(0.65)
-    c.line(page_w / 2, 0, page_w / 2, page_h)  # vertical fold guide
+#    c.line(page_w / 2, 0, page_w / 2, page_h)  # vertical fold guide
     c.line(0, page_h / 2, page_w, page_h / 2)  # horizontal guide
     c.restoreState()
 
