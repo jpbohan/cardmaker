@@ -187,6 +187,17 @@
       });
     }
 
+    /* Notify pdf button when clicked */
+    const form = document.getElementById("cardForm");
+    const generateBtn = document.getElementById("generateBtn");
+
+    form.addEventListener("submit", () => {
+      generateBtn.innerHTML = "Preparing PDF... ";
+      generateBtn.style.backgroundColor = "#777";
+      generateBtn.style.cursor = "not-allowed";
+      generateBtn.disabled = true;
+    });
+
 
     ["change", "input"].forEach(evt => {
       els.front.addEventListener(evt, () => { setFileNameDisplays(); updatePreviewBtn(); });
