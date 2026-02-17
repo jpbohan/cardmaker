@@ -24,7 +24,8 @@
     .previewGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; row-gap: 10px; margin-top: 14px; }
     .thumbWrap { border: none; border-radius: 0; padding: 0; background: transparent; }
     .thumbLabel { font-weight: 800; margin-bottom: 8px; }
-    .thumb { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0; border: none; }
+    .thumb { object-fit: cover; }
+    /* .thumb { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0; border: none; } */
     .small { font-size: 13px; color: #666; margin-top: 6px; }
 
     /* simple screen switch */
@@ -62,7 +63,7 @@
         </div>
         <div style="margin-top: 16px;">
           <label style="display:flex; gap:8px; align-items:center; font-weight:600;">
-            <input type="checkbox" name="fit_mode" value="contain">
+            <input id="fitMode" type="checkbox" name="fit_mode" value="contain">
             Fit entire photo (no cropping)
           </label>
           <div class="small">
@@ -130,6 +131,8 @@
       backName: document.getElementById("backName"),
       innerLeftName: document.getElementById("innerLeftName"),
       innerRightName: document.getElementById("innerRightName"),
+      fitMode: document.getElementById("fitMode"),
+
     };
 
     function hasAllFiles() {
@@ -174,6 +177,17 @@
       }
     }
 
+    function applyPreviewFitMode() {
+      const fitEntire = els.fitMode && els.fitMode.checked;
+      const mode = fitEntire ? "contain" : "cover";
+
+      [els.frontPreview, els.backPreview, els.innerLeftPreview, els.innerRightPreview].forEach(img => {
+        img.style.objectFit = mode;
+        img.style.background = fitEntire ? "#fff" : "#fafafa"; // optional
+      });
+    }
+
+
     ["change", "input"].forEach(evt => {
       els.front.addEventListener(evt, () => { setFileNameDisplays(); updatePreviewBtn(); });
       els.back.addEventListener(evt, () => { setFileNameDisplays(); updatePreviewBtn(); });
@@ -184,8 +198,14 @@
     els.previewBtn.addEventListener("click", async () => {
       if (!hasAllFiles()) return;
       await populatePreviews();
+      applyPreviewFitMode();
       showScreen("preview");
       window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    els.fitMode.addEventListener("change", () => {
+      // If they're already on preview, update instantly
+      applyPreviewFitMode();
     });
 
     els.backBtn.addEventListener("click", () => {
