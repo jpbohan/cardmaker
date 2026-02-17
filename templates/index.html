@@ -21,11 +21,11 @@
 
     /* Preview area */
     #previewScreen { max-width: 900px; margin: 0 auto; }
-    .previewGrid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; row-gap: 10px; margin-top: 14px; }
-    .thumbWrap { padding: 0; border: 0; background: transparent; }
+    .previewGrid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; row-gap: 10px; margin-top: 14px; border: none; background: #fff; align-items: stretch; }
+    .thumbWrap { border: none; outline: none; background: transparent; }
     .thumbLabel { font-weight: 800; margin: 0 0 6px; }
     /* .thumb { object-fit: cover; }  Note: Changed from 1.322 to 1.2 */
-    .thumb { width: 100%; aspect-ratio: 1.322 / 1; object-fit: cover; display: block; border: 1px solid #eee; background: #fafafa; border-radius: 0; }
+    .thumb { width: 100%; aspect-ratio: 1.322 / 1; object-fit: cover; display: block; border: 1px solid #eee; background: #fafafa; border-radius: 0; vertical-align: middle; }
     .small { font-size: 13px; color: #666; margin-top: 6px; }
 
     /* simple screen switch */
