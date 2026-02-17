@@ -20,12 +20,12 @@
     .note { margin-top: 10px; font-size: 14px; color: #666; }
 
     /* Preview area */
-    /* #previewScreen { display: none; } */
+    #previewScreen { max-width: 900px; margin: 0 auto; }
     .previewGrid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; row-gap: 10px; margin-top: 14px; }
-    .thumbWrap { border: 0; padding: 0; background: transparent; }
+    .thumbWrap { padding: 0; border: 0; background: transparent; }
     .thumbLabel { font-weight: 800; margin: 0 0 6px; }
     /* .thumb { object-fit: cover; }  Note: Changed from 1.322 to 1.2 */
-    .thumb { width: 100%; aspect-ratio: 4 / 3; max-height: 220px; object-fit: cover; border-radius: 0; border: 1px solid #eee; background: #fafafa; display: block; }
+    .thumb { width: 100%; aspect-ratio: 1.322 / 1; object-fit: cover; display: block; border: 1px solid #eee; background: #fafafa; border-radius: 0; }
     .small { font-size: 13px; color: #666; margin-top: 6px; }
 
     /* simple screen switch */
