@@ -31,16 +31,22 @@ def _check_file(file_storage) -> bool:
     return any(name.endswith(ext) for ext in ALLOWED_EXTS)
 
 
+from PIL import Image, ImageOps
+
 def _open_image(file_storage) -> Image.Image:
     file_storage.stream.seek(0)
     img = Image.open(file_storage.stream)
 
-    img.verify()  # quick validation
+    img.verify()
 
     file_storage.stream.seek(0)
-    img = Image.open(file_storage.stream).convert("RGB")
+    img = Image.open(file_storage.stream)
 
-    img.load()  # <-- ADD IT HERE (forces image into memory immediately)
+    # 👇 THIS FIXES IPHONE ROTATION
+    img = ImageOps.exif_transpose(img)
+
+    img = img.convert("RGB")
+    img.load()
 
     return img
 
