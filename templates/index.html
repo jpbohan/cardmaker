@@ -149,7 +149,7 @@
     function updatePreviewBtn() {
       els.previewBtn.disabled = !hasAllFiles();
     }
-
+/*
     async function fileToDataURL(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -158,13 +158,27 @@
         reader.readAsDataURL(file);
       });
     }
+*/
+let previewUrls = [];
 
-    async function populatePreviews() {
-      const f = els.front.files[0], b = els.back.files[0], il = els.innerLeft.files[0], ir = els.innerRight.files[0];
-      els.frontPreview.src = await fileToDataURL(f);
-      els.backPreview.src = await fileToDataURL(b);
-      els.innerLeftPreview.src = await fileToDataURL(il);
-      els.innerRightPreview.src = await fileToDataURL(ir);
+    function setPreviewImg(imgEl, file) {
+      const url = URL.createObjectURL(file);
+      previewUrls.push(url);
+      imgEl.src = url;
+    }
+
+    function cleanupPreviewUrls() {
+      previewUrls.forEach(u => URL.revokeObjectURL(u));
+      previewUrls = [];
+    }
+
+    function populatePreviews() {
+      cleanupPreviewUrls();
+
+      setPreviewImg(els.frontPreview, els.front.files[0]);
+      setPreviewImg(els.backPreview, els.back.files[0]);
+      setPreviewImg(els.innerLeftPreview, els.innerLeft.files[0]);
+      setPreviewImg(els.innerRightPreview, els.innerRight.files[0]);
     }
 
     function showScreen(which) {
@@ -208,7 +222,7 @@
 
     els.previewBtn.addEventListener("click", async () => {
       if (!hasAllFiles()) return;
-      await populatePreviews();
+      populatePreviews();
       applyPreviewFitMode();
       showScreen("preview");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -220,6 +234,7 @@
     });
 
     els.backBtn.addEventListener("click", () => {
+      cleanupPreviewUrls();
       showScreen("upload");
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
